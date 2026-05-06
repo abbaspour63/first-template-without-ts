@@ -107,7 +107,6 @@ class ProjectInput {
        required:true,
        min:0,
        max:10
-
      }
      if(!validate(titlevalidateble)|| !validate(descriptionvalidateble)||!validate(peoplevalidateble)){
          alert("INVALID DATA")
@@ -122,7 +121,7 @@ class ProjectInput {
     this.titleInputElement.value="";
     this.descriptionInputElement.value="";
     this.peopleInputElement.value="";
-
+    
   }
   //submit Handeler
   @autobinder
