@@ -1,6 +1,20 @@
+enum Projectstatus{
+    Active,finished
+}
+class project{
+  constructor( public id:string,
+    public title:string,
+    public description:string,
+    public people:number,
+    public  status:Projectstatus
+  ){
+   
+    
+  }
+}
 class Projectstate {
     private listeners: any[] = [];
-    private projects: any[] = [];
+    private projects: project[] = [];
     //singleton 
     private static instance: Projectstate;
     private constructor() {
@@ -19,12 +33,19 @@ class Projectstate {
     }
 
     addproject(title: string, description: string, numofPeople: number) {
-        const newProject = {
-            id: Math.random().toString(),
-            title: title,
-            description: description,
-            numofPeople: numofPeople
-        }
+        // const newProject = {
+        //     id: Math.random().toString(),
+        //     title: title,
+        //     description: description,
+        //     numofPeople: numofPeople
+        // }
+    const newProject=new project(
+    Math.random.toString(),
+     title,
+       description,
+      numofPeople ,
+     Projectstatus.Active
+    )
         this.projects.push(newProject);
         for (const listenerFn of this.listeners) {
             listenerFn(this.projects.slice())
@@ -70,7 +91,6 @@ function autobinder(_: any, _2: string, descriptor: PropertyDescriptor) {
     const originalMethod = descriptor.value;
     const myDescriptor: PropertyDescriptor = {
         configurable: true,
-
         get() {
             const boundFn = originalMethod.bind(this);
             return boundFn;
@@ -83,7 +103,7 @@ class Projectlist {
     templateElement: HTMLTemplateElement;
     hostElement: HTMLDivElement;
     element: HTMLFormElement;
-    assignedproject:any[];
+    assignedproject:project[];
     constructor(private type: 'active' | 'finished') {
         this.templateElement = document.getElementById("project-list")! as HTMLTemplateElement;
         this.hostElement = document.getElementById("app")! as HTMLDivElement;
@@ -91,9 +111,16 @@ class Projectlist {
         this.assignedproject=[]
         this.element = importednode.firstElementChild as HTMLFormElement;
         this.element.id = `${this.type}-projects`;
-        projectstate.addlistener((projects:any[])=>{
-           this.assignedproject=projects;
-           this.renderprojects();
+        projectstate.addlistener((projects:project[])=>{
+        const relatedproject=projects.filter((prj)=>{
+            if(this.type=="active"){
+                return prj.status==Projectstatus.Active
+            }
+            return prj.status==Projectstatus.finished
+        });
+        this.assignedproject==relatedproject
+        //    this.assignedproject=projects;
+           this.renderprojects(); 
 
         })
         this.attach();
@@ -132,11 +159,11 @@ class ProjectInfo {
         this.templateElement = document.getElementById("project-input")! as HTMLTemplateElement;
         this.hostElement = document.getElementById("app")! as HTMLDivElement;
         
-        const importednode = document.importNode(this.templateElement.content, true);
-        this.element = importednode.firstElementChild as HTMLFormElement;
-
+        const importednode = document.importNode(this.templateElement.content,true);
+        this.element =importednode.firstElementChild as HTMLFormElement;
+        
         this.element.id = "user-input";
-
+        
         this.titleInputElement = this.element.querySelector("#title") as HTMLInputElement;
         this.descriptionInputElement = this.element.querySelector("#description") as HTMLInputElement;
         this.peopleInputElement = this.element.querySelector("#people") as HTMLInputElement;
@@ -171,8 +198,6 @@ class ProjectInfo {
             max: 10
         }
 
-
-
         if (!validate(titlevalidatable) || !validate(descriptionvalidatable) || !validate(peoplevalidatable)) {
            alert("Invalid")
             return;
@@ -200,9 +225,9 @@ class ProjectInfo {
         }
 
     }
-
+    //submit  listener 
     private configure() {
-        this.element.addEventListener('submit',this.submithandeler);    
+        this.element.addEventListener('submit',this.submithandeler);
     }
     private attach() {
         this.hostElement.insertAdjacentElement("afterbegin",this.element)
@@ -211,4 +236,4 @@ class ProjectInfo {
 
 const prjInput = new ProjectInfo();
 const activePrj = new Projectlist('active')
-const finished = new Projectlist('finished')
+const finishedprj = new Projectlist('finished')
