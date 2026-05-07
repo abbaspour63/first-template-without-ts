@@ -131,7 +131,7 @@ class ProjectInfo {
     constructor() {
         this.templateElement = document.getElementById("project-input")! as HTMLTemplateElement;
         this.hostElement = document.getElementById("app")! as HTMLDivElement;
-
+        
         const importednode = document.importNode(this.templateElement.content, true);
         this.element = importednode.firstElementChild as HTMLFormElement;
 
