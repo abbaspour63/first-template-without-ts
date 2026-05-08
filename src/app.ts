@@ -1,6 +1,7 @@
 enum Projectstatus{
     Active,finished
 }
+
 class project{
   constructor( public id:string,
     public title:string,
@@ -8,13 +9,13 @@ class project{
     public people:number,
     public  status:Projectstatus
   ){
-   
-    
+
+
   }
 }
 class Projectstate {
     private listeners: any[] = [];
-    private projects: project[] = [];
+    private projects: project[]=[];
     //singleton 
     private static instance: Projectstate;
     private constructor() {
@@ -32,7 +33,7 @@ class Projectstate {
         this.listeners.push(listenerFn)
     }
 
-    addproject(title: string, description: string, numofPeople: number) {
+    addproject(title: string, description:string, numofPeople: number) {
         // const newProject = {
         //     id: Math.random().toString(),
         //     title: title,
@@ -42,7 +43,7 @@ class Projectstate {
     const newProject=new project(
     Math.random.toString(),
      title,
-       description,
+        description,
       numofPeople ,
      Projectstatus.Active
     )
@@ -108,15 +109,16 @@ class Projectlist {
         this.templateElement = document.getElementById("project-list")! as HTMLTemplateElement;
         this.hostElement = document.getElementById("app")! as HTMLDivElement;
         const importednode = document.importNode(this.templateElement.content, true);
-        this.assignedproject=[]
+        this.assignedproject=[];
         this.element = importednode.firstElementChild as HTMLFormElement;
         this.element.id = `${this.type}-projects`;
+
         projectstate.addlistener((projects:project[])=>{
         const relatedproject=projects.filter((prj)=>{
-            if(this.type=="active"){
-                return prj.status==Projectstatus.Active
+            if(this.type==="active"){
+                return prj.status===Projectstatus.Active
             }
-            return prj.status==Projectstatus.finished
+            return prj.status===Projectstatus.finished
         });
         this.assignedproject==relatedproject
         //    this.assignedproject=projects;
@@ -232,6 +234,7 @@ class ProjectInfo {
     private attach() {
         this.hostElement.insertAdjacentElement("afterbegin",this.element)
     }
+
 }
 
 const prjInput = new ProjectInfo();
