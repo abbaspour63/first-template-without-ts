@@ -1,18 +1,17 @@
-enum Projectstatus{
+enum ProjectStatus{
     Active,finished
 }
 
 class project{
-  constructor( public id:string,
+  constructor( public id:string,    
     public title:string,
     public description:string,
     public people:number,
-    public  status:Projectstatus
-  ){
-
-
-  }
+    public  status:ProjectStatus
+  ){}
+  
 }
+
 class Projectstate {
     private listeners: any[] = [];
     private projects: project[]=[];
@@ -21,16 +20,19 @@ class Projectstate {
     private constructor() {
     
     }
+
     static getinstance() {
         if (this.instance) {
             return this.instance;
+            
         }
         this.instance = new Projectstate()
         return this.instance;
     }
 
     addlistener(listenerFn: Function) {
-        this.listeners.push(listenerFn)
+        this.listeners.push(listenerFn);
+        
     }
 
     addproject(title: string, description:string, numofPeople: number) {
@@ -45,11 +47,11 @@ class Projectstate {
      title,
         description,
       numofPeople ,
-     Projectstatus.Active
-    )
+     ProjectStatus.Active
+    );
         this.projects.push(newProject);
         for (const listenerFn of this.listeners) {
-            listenerFn(this.projects.slice())
+            listenerFn(this.projects.slice());
 
         }
     }
@@ -58,36 +60,35 @@ class Projectstate {
 const projectstate = Projectstate.getinstance()
 
 
-interface validatable {
+interface Validatable {
     value: string | number;
     required?: boolean;
-    minlength?: number;
-    maxlength?: number;
+    minLength?: number;
+    maxLength?: number;
     min?: number;
     max?: number;
 }
 
-function validate(validatbleInput: validatable) {
-    let isvalid = true;
-    if (validatbleInput.required) {
-        isvalid = isvalid && validatbleInput.value.toString().trim().length! == 0;
+function validate(validatebleInput:Validatable){
+    let isvalid=true;
+    if(validatebleInput.required){
+        isvalid=isvalid && validatebleInput.value.toString().trim().length !==0;
     }
-    if (validatbleInput.minlength != null && typeof validatbleInput.value === 'string') {
-        isvalid = isvalid && validatbleInput.value.length >= validatbleInput.minlength;
+    if(validatebleInput.minLength !=null &&  typeof validatebleInput.value==="string"){
+        isvalid=isvalid&& validatebleInput.value.length >= validatebleInput.minLength
     }
-    if (validatbleInput.maxlength != null && typeof validatbleInput.value === 'string') {
-        isvalid = isvalid && validatbleInput.value.length <= validatbleInput.maxlength;
+    if(validatebleInput.maxLength !=null && typeof validatebleInput.value==="string"){
+        isvalid=isvalid&& validatebleInput.value.length <= validatebleInput.maxLength
     }
-    if (validatbleInput.min != null && typeof validatbleInput.value == 'number') {
-        isvalid = isvalid && validatbleInput.value >= validatbleInput.min;
-    }
-    if (validatbleInput.max != null && typeof validatbleInput.value == 'number') {
-        isvalid = isvalid && validatbleInput.value <= validatbleInput.max;
-    }
-    return isvalid;
-
+    if(validatebleInput.min !=null && typeof validatebleInput.value==="number"){
+        isvalid=isvalid && validatebleInput.value >= validatebleInput.min;
 }
-//autobinder 
+  if(validatebleInput.max !=null && typeof validatebleInput.value==="number"){
+        isvalid=isvalid && validatebleInput.value <= validatebleInput.max;
+}
+  return isvalid;
+}
+
 function autobinder(_: any, _2: string, descriptor: PropertyDescriptor) {
     const originalMethod = descriptor.value;
     const myDescriptor: PropertyDescriptor = {
@@ -116,17 +117,20 @@ class Projectlist {
         projectstate.addlistener((projects:project[])=>{
         const relatedproject=projects.filter((prj)=>{
             if(this.type==="active"){
-                return prj.status===Projectstatus.Active
+                return prj.status===ProjectStatus.Active;
             }
-            return prj.status===Projectstatus.finished
+            return prj.status===ProjectStatus.finished
         });
-        this.assignedproject==relatedproject
+        this.assignedproject===relatedproject
         //    this.assignedproject=projects;
            this.renderprojects(); 
+           
+           
 
         })
         this.attach();
         this.rendercontent();
+        
         
     }
     private renderprojects(){
@@ -179,21 +183,21 @@ class ProjectInfo {
         const enteredDescription = this.descriptionInputElement.value;
         const enterdpeople = this.peopleInputElement.value;
 
-        const titlevalidatable: validatable = {
+        const titlevalidatable: Validatable = {
             value: enterdTitle,
             required: true,
-            minlength: 3
+             minLength: 3
 
         };
-        const descriptionvalidatable: validatable = {
+        const descriptionvalidatable: Validatable = {
             value: enteredDescription,
             required: true,
-            minlength: 5,
-            maxlength: 120
+             minLength: 5,
+            maxLength: 120
 
         };
 
-        const peoplevalidatable: validatable = {
+        const peoplevalidatable: Validatable = {
             value: +enterdpeople,
             required: true,
             min: 1,
@@ -201,6 +205,8 @@ class ProjectInfo {
         }
 
         if (!validate(titlevalidatable) || !validate(descriptionvalidatable) || !validate(peoplevalidatable)) {
+            
+            
            alert("Invalid")
             return;
         } else {
